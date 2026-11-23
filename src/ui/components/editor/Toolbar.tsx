@@ -12,6 +12,8 @@ import {
   Save,
   Search,
   Square,
+  SquareDashed,
+  Type,
   Undo2,
   X,
   ZoomIn,
@@ -211,6 +213,16 @@ function ToolButtons() {
         }}
       />
       <IconButton
+        label={t('toolbar.toolText')}
+        shortcut="T"
+        icon={<Type aria-hidden className="size-5" />}
+        active={tool === 'text'}
+        aria-pressed={tool === 'text'}
+        onClick={() => {
+          setTool('text');
+        }}
+      />
+      <IconButton
         label={t('toolbar.toolRectangle')}
         shortcut="R"
         icon={<Square aria-hidden className="size-5" />}
@@ -218,6 +230,16 @@ function ToolButtons() {
         aria-pressed={tool === 'rectangle'}
         onClick={() => {
           setTool('rectangle');
+        }}
+      />
+      <IconButton
+        label={t('toolbar.toolWhiteout')}
+        shortcut="W"
+        icon={<SquareDashed aria-hidden className="size-5" />}
+        active={tool === 'whiteout'}
+        aria-pressed={tool === 'whiteout'}
+        onClick={() => {
+          setTool('whiteout');
         }}
       />
     </div>

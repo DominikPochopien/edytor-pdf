@@ -1,3 +1,4 @@
+import type { FontFamilyId } from '../fonts';
 import type { Point } from '../geometry';
 
 export type ObjectId = string;
@@ -37,10 +38,41 @@ export interface ShapeObject extends EditObjectBase {
   readonly strokeWidth: number;
 }
 
+export type TextAlign = 'left' | 'center' | 'right' | 'justify';
+
+export interface TextStyle {
+  readonly fontFamily: FontFamilyId;
+  /** Font size in points. */
+  readonly fontSize: number;
+  readonly color: HexColor;
+  readonly bold: boolean;
+  readonly italic: boolean;
+  readonly underline: boolean;
+  readonly align: TextAlign;
+  /** Distance between baselines as a multiple of the font size. */
+  readonly lineHeight: number;
+}
+
 /**
- * Everything the user added on top of the original document. Text, drawings, images,
- * annotations, whiteout and redaction marks join this union in later stages.
+ * A text box. `frame.width` is the wrapping width; `frame.height` follows from the text
+ * (it is recalculated whenever the text, width or style changes).
  */
-export type EditObject = ShapeObject;
+export interface TextObject extends EditObjectBase {
+  readonly kind: 'text';
+  readonly text: string;
+  readonly style: TextStyle;
+}
+
+/** A filled rectangle that covers content. It does not remove anything from the file. */
+export interface WhiteoutRect extends EditObjectBase {
+  readonly kind: 'whiteout';
+  readonly color: HexColor;
+}
+
+/**
+ * Everything the user added on top of the original document. Drawings, images,
+ * annotations and redaction marks join this union in later stages.
+ */
+export type EditObject = ShapeObject | TextObject | WhiteoutRect;
 
 export type EditObjectKind = EditObject['kind'];

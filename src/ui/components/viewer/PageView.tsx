@@ -53,7 +53,7 @@ export function PageView(props: PageViewProps) {
       style={{ top: slot.top, left, width: slot.width, height: slot.height }}
     >
       {/* The canvas keeps the previous bitmap (stretched) while a sharper one renders. */}
-      <canvas ref={canvasRef} aria-hidden className="absolute inset-0 size-full" />
+      <canvas ref={canvasRef} aria-hidden data-page-canvas className="absolute inset-0 size-full" />
       {state.status === 'loading' && (
         <span className="sr-only">{t('page.loading', { page: pageIndex + 1 })}</span>
       )}

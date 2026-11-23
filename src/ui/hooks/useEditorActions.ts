@@ -1,31 +1,48 @@
 import { useMemo } from 'react';
 import type { Command } from '../../application/commands';
-import type { EditorTool } from '../../application/ports';
+import { toAppError } from '../../application/errors';
+import type { DrawingTool, EditorTool } from '../../application/ports';
 import type { PageLookup, StylePatch } from '../../application/use-cases';
 import {
   copyObjects,
   createRectangle,
+  createText,
+  createWhiteout,
   duplicateSelection,
+  editText,
   nudgeObjects,
   removeSelection,
   reorderObject,
   reshapeObject,
   restyleObject,
+  restyleText,
   selectedObjects,
+  textFontKey,
   transformObject,
 } from '../../application/use-cases';
-import type { DisplayFrame, ObjectId } from '../../domain/objects';
+import type { DisplayFrame, HexColor, ObjectId, TextStyle } from '../../domain/objects';
+import { findObject } from '../../domain/objects';
+import { logDev } from '../app/devLog';
 import { useServices } from '../app/services';
 import { useEditorStore } from '../store/editorStore';
 import { useViewerStore } from '../store/viewerStore';
+
+export interface TextChange {
+  readonly style?: Partial<TextStyle>;
+  readonly width?: number;
+}
 
 export interface EditorActions {
   readonly undo: () => void;
   readonly redo: () => void;
   readonly setTool: (tool: EditorTool) => void;
   readonly select: (ids: readonly ObjectId[]) => void;
-  readonly draw: (tool: EditorTool, pageIndex: number, display: DisplayFrame) => void;
+  readonly draw: (tool: DrawingTool, pageIndex: number, display: DisplayFrame) => void;
   readonly transform: (id: ObjectId, display: DisplayFrame, kind: 'move' | 'transform') => void;
+  readonly addText: (pageIndex: number, display: DisplayFrame, text: string) => void;
+  readonly finishTextEdit: (id: ObjectId, text: string, display: DisplayFrame) => void;
+  readonly changeText: (id: ObjectId, change: TextChange) => Promise<void>;
+  readonly pickColor: (color: HexColor) => void;
   readonly nudge: (dx: number, dy: number) => void;
   readonly removeSelected: () => void;
   readonly duplicateSelected: () => void;
@@ -45,7 +62,7 @@ const pageLookup: PageLookup = (pageIndex) =>
  * executed by the EditorSession, so it can be undone.
  */
 export function useEditorActions(): EditorActions {
-  const { editor, newId } = useServices();
+  const { editor, newId, fonts, loadTextLayout } = useServices();
 
   return useMemo<EditorActions>(() => {
     const model = () => editor.snapshot.model;
@@ -54,6 +71,23 @@ export function useEditorActions(): EditorActions {
       if (command !== null) {
         editor.execute(command);
       }
+    };
+    /** Runs a command that creates one object, then selects it with the select tool. */
+    const runAndSelectNew = (command: Command | null): void => {
+      if (command === null) {
+        return;
+      }
+      run(command);
+      const created = editor.snapshot.model.objects.at(-1);
+      const store = useEditorStore.getState();
+      store.setTool('select');
+      if (created !== undefined) {
+        store.select([created.id]);
+      }
+    };
+    const reportError = (error: unknown): void => {
+      logDev('Editing failed', error);
+      useViewerStore.getState().showError(toAppError(error).code);
     };
 
     return {
@@ -65,26 +99,64 @@ export function useEditorActions(): EditorActions {
       },
       setTool: (tool) => {
         useEditorStore.getState().setTool(tool);
+        if (tool === 'text') {
+          // Load the font before the first click, so the new box is measured correctly.
+          const { style } = useEditorStore.getState().textDefaults;
+          fonts.ensureLoaded([textFontKey(style, fonts)]).catch(reportError);
+        }
       },
       select: (ids) => {
         useEditorStore.getState().select(ids);
       },
-      draw: (_tool, pageIndex, display) => {
+      draw: (tool, pageIndex, display) => {
         const page = pageLookup(pageIndex);
         if (page === undefined) {
           return;
         }
-        const command = createRectangle(page, display, newId);
-        run(command);
-        const created = editor.snapshot.model.objects.at(-1);
-        const store = useEditorStore.getState();
-        store.setTool('select');
-        if (created !== undefined) {
-          store.select([created.id]);
-        }
+        runAndSelectNew(
+          tool === 'whiteout'
+            ? createWhiteout(page, display, newId)
+            : createRectangle(page, display, newId),
+        );
       },
       transform: (id, display, kind) => {
         run(transformObject(model(), id, display, pageLookup, kind));
+      },
+      addText: (pageIndex, display, text) => {
+        const page = pageLookup(pageIndex);
+        if (page !== undefined) {
+          const { style } = useEditorStore.getState().textDefaults;
+          runAndSelectNew(createText(page, display, text, style, newId));
+        }
+      },
+      finishTextEdit: (id, text, display) => {
+        run(editText(model(), id, text, display, pageLookup));
+      },
+      changeText: async (id, change) => {
+        const object = findObject(model(), id);
+        if (object?.kind !== 'text') {
+          return;
+        }
+        try {
+          const style = { ...object.style, ...change.style };
+          await fonts.ensureLoaded([textFontKey(style, fonts)]);
+          const layout = await loadTextLayout();
+          run(restyleText(model(), id, pageLookup, layout, change, Date.now()));
+          if (change.style !== undefined) {
+            useEditorStore.getState().setTextDefaults(change.style);
+          }
+        } catch (error) {
+          reportError(error);
+        }
+      },
+      pickColor: (color) => {
+        const store = useEditorStore.getState();
+        const target = store.pickTarget;
+        store.setTool('select');
+        if (target !== null) {
+          run(restyleObject(model(), target, { color }, Date.now()));
+          store.select([target]);
+        }
       },
       nudge: (dx, dy) => {
         run(nudgeObjects(model(), selection(), pageLookup, dx, dy, Date.now()));
@@ -133,5 +205,5 @@ export function useEditorActions(): EditorActions {
         run(reshapeObject(model(), id, pageLookup, change, Date.now()));
       },
     };
-  }, [editor, newId]);
+  }, [editor, newId, fonts, loadTextLayout]);
 }

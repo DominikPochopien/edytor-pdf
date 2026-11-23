@@ -4,6 +4,7 @@ import { buttonStyles } from '../common/buttonStyles';
 import { Modal } from '../common/Modal';
 
 const THIRD_PARTY_LICENSES_FILE = 'THIRD_PARTY_LICENSES.txt';
+const FONT_LICENSES_FILE = 'fonts/LICENSES.txt';
 
 export function AboutDialog() {
   const { t } = useTranslation();
@@ -41,6 +42,16 @@ export function AboutDialog() {
             rel="noreferrer noopener"
           >
             {t('about.thirdParty')}
+          </a>
+        </li>
+        <li>
+          <a
+            className="text-accent-700 underline dark:text-accent-100"
+            href={`${import.meta.env.BASE_URL}${FONT_LICENSES_FILE}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {t('about.fontLicenses')}
           </a>
         </li>
       </ul>

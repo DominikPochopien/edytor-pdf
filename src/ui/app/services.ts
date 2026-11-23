@@ -3,11 +3,15 @@ import type { EditorSession } from '../../application/commands';
 import type {
   FileAccess,
   FileSaver,
+  FontInspector,
+  FontProvider,
+  LocalFontSource,
   ObjectLayerFactory,
   PdfDocumentWriter,
   PdfEngineLoader,
   PdfTextExtractor,
   RecentFilesStore,
+  TextLayoutEngine,
 } from '../../application/ports';
 import type { DocumentSession, IdGenerator } from '../../application/use-cases';
 import type { PageImageService } from '../../application/viewer';
@@ -25,6 +29,11 @@ export interface AppServices {
   readonly saver: FileSaver;
   /** The editing layer library is loaded on demand, together with the editor screen. */
   readonly loadObjectLayers: () => Promise<ObjectLayerFactory>;
+  /** Line breaking for text boxes (same engine as the editing layer). */
+  readonly loadTextLayout: () => Promise<TextLayoutEngine>;
+  readonly fonts: FontProvider;
+  readonly fontInspector: FontInspector;
+  readonly localFonts: LocalFontSource;
   readonly newId: IdGenerator;
   readonly recentFiles: RecentFilesStore;
   readonly sampleUrl: string;

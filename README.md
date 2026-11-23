@@ -4,7 +4,7 @@
 
 Twoje pliki nie są nigdzie wysyłane – wszystko dzieje się w przeglądarce na Twoim komputerze.
 
-> Projekt w budowie – etap 2 z 10 (przeglądanie, warstwa obiektów, Cofnij/Ponów, zapis). Pełna instrukcja pojawi się po ostatnim etapie.
+> Projekt w budowie – etap 3 z 10 (przeglądanie, obiekty, Cofnij/Ponów, zapis, tekst i fonty, zamalowywanie). Pełna instrukcja pojawi się po ostatnim etapie.
 
 ## Jak używać
 

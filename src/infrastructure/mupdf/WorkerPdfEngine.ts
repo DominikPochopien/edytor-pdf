@@ -7,6 +7,9 @@ import type {
   PageBitmap,
   PdfDocumentLoader,
   PdfEngineLoader,
+  ExportResources,
+  FontCheck,
+  FontInspector,
   PdfDocumentWriter,
   PdfRenderer,
   PdfTextExtractor,
@@ -38,7 +41,13 @@ function createWorker(): Worker {
  * freezes. Implements the application ports used by the viewer.
  */
 export class WorkerPdfEngine
-  implements PdfEngineLoader, PdfDocumentLoader, PdfRenderer, PdfTextExtractor, PdfDocumentWriter
+  implements
+    PdfEngineLoader,
+    PdfDocumentLoader,
+    PdfRenderer,
+    PdfTextExtractor,
+    PdfDocumentWriter,
+    FontInspector
 {
   private worker: Worker;
   private remote: Comlink.Remote<PdfWorkerApi>;
@@ -119,8 +128,17 @@ export class WorkerPdfEngine
     return unwrap(await this.remote.getLinks(id, pageIndex));
   }
 
-  async exportDocument(id: DocumentId, objects: readonly EditObject[]): Promise<Uint8Array> {
-    return unwrap(await this.remote.exportDocument(id, objects));
+  async exportDocument(
+    id: DocumentId,
+    objects: readonly EditObject[],
+    resources: ExportResources,
+  ): Promise<Uint8Array> {
+    return unwrap(await this.remote.exportDocument(id, objects, resources));
+  }
+
+  async inspectFont(bytes: Uint8Array): Promise<FontCheck> {
+    await this.load(this.progressListener);
+    return unwrap(await this.remote.inspectFont(bytes));
   }
 
   private async startLoading(): Promise<void> {

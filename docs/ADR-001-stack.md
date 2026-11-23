@@ -118,6 +118,19 @@ MuPDF ma własny dziennik (`enableJournal`, `undo`, `redo`), ale zgodnie ze spec
 jest wzorcem Command w warstwie `application`. Dziennika MuPDF nie używamy, żeby historia nie była
 związana z silnikiem.
 
+## Fonty (etap 3)
+
+- Noto Sans, Noto Serif, Roboto i Open Sans są ograniczone do potrzebnych zakresów (łacinka z polskimi
+  znakami, greka, cyrylica, symbole matematyczne) skryptem `scripts/fonts/prepare_fonts.py`; Roboto
+  jest instancją fontu zmiennego (wght 400/700).
+- Lato (OFL z zastrzeżoną nazwą „Lato”) i Latin Modern (GUST Font License) są w oryginalnej postaci,
+  bo ich licencje ograniczają rozpowszechnianie zmienionych wersji pod tą samą nazwą.
+- W zapisanym PDF fonty są osadzane jako podzbiory (`PDFDocument.subsetFonts()`), ToUnicode jest
+  zachowane, więc tekst daje się skopiować.
+- Łamanie linii: Fabric.js mierzy tekst czcionką z przeglądarki (FontFace), MuPDF — tym samym plikiem
+  fontu. Linie łamie zawsze Fabric (na ekranie i przy zapisie), więc podziały są identyczne; w obrębie
+  linii możliwe są ułamkowe różnice pozycji znaków (kerning).
+
 ## Ryzyka i ograniczenia
 
 1. **Rozmiar silnika**: ok. 3,6 MB (brotli) przy pierwszej wizycie. Łagodzimy to ładowaniem

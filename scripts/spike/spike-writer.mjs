@@ -2,7 +2,7 @@
 import * as mupdf from 'mupdf';
 import fs from 'node:fs';
 const src = fs.readFileSync('public/przyklad.pdf');
-const font = new mupdf.Font('NotoSans', fs.readFileSync('public/fonts/NotoSans-Regular.ttf'));
+const font = new mupdf.Font('NotoSans', fs.readFileSync('public/fonts/noto-sans/NotoSans-regular.ttf'));
 
 function embed(doc, pageIndex, draw) {
   const pageObj = doc.findPage(pageIndex);

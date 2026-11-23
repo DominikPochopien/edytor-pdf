@@ -12,6 +12,7 @@ export const APP_ERROR_CODES = [
   'render-failed',
   'file-read-failed',
   'save-failed',
+  'font-invalid',
   'unknown',
 ] as const;
 

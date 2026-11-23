@@ -65,7 +65,12 @@ UI (React) → hooki → use-case (application) → port (interfejs)
    kopiuj/wklej/duplikuj/usuń, kolejność warstw, strzałki; zapis: kopia z oryginalnych bajtów +
    Form XObject (`infrastructure/mupdf/documentExporter.ts`), „Zapisz” przez File System Access API,
    „Zapisz jako”, pobieranie, gwiazdka i ostrzeżenie przed zamknięciem karty.
-3. Dodawanie tekstu, fonty, whiteout.
+3. **Tekst, fonty, whiteout** – `TextObject` i `WhiteoutRect` w `domain/objects`, wspólne metryki
+   tekstu (`textMetrics.ts`), łamanie linii przez Fabric.js także przy zapisie (`TextLayoutEngine`),
+   dzięki czemu PDF łamie tekst tak samo jak ekran; fonty dołączone (Noto Sans/Serif, Roboto, Lato,
+   Open Sans, Latin Modern – `scripts/fonts/prepare_fonts.py`), własne pliki .ttf/.otf i fonty
+   systemowe (Local Font Access API), osadzanie jako podzbiory (`subsetFonts`), pipeta i ostrzeżenie,
+   że whiteout tylko zakrywa.
 4. Rysowanie i kształty.
 5. Edycja istniejącego tekstu.
 6. Adnotacje.

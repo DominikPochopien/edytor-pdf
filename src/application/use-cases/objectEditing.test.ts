@@ -32,7 +32,7 @@ function setup() {
 
 function onlyShape(session: EditorSession, index = 0): ShapeObject {
   const object = session.snapshot.model.objects[index];
-  if (object === undefined) {
+  if (object?.kind !== 'shape') {
     throw new Error('no object');
   }
   return object;

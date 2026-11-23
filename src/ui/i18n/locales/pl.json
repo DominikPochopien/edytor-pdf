@@ -67,7 +67,10 @@
     "tools": "Narzędzia",
     "toolSelect": "Zaznacz i przesuwaj",
     "toolRectangle": "Prostokąt",
-    "unsaved": "Niezapisane zmiany"
+    "unsaved": "Niezapisane zmiany",
+    "toolText": "Tekst",
+    "toolWhiteout": "Zamalowanie (whiteout)",
+    "toolEyedropper": "Pipeta"
   },
   "sidebar": {
     "label": "Panel boczny",
@@ -136,14 +139,17 @@
     "nudge": "Przesuń o 1 pt (z Shift: 10 pt)",
     "arrange": "Na wierzch / na spód",
     "deselect": "Odznacz, wróć do narzędzia Zaznacz",
-    "square": "Kwadrat zamiast prostokąta (podczas rysowania)"
+    "square": "Kwadrat zamiast prostokąta (podczas rysowania)",
+    "toolText": "Narzędzie Tekst",
+    "toolWhiteout": "Narzędzie Zamalowanie"
   },
   "about": {
     "title": "O programie",
     "description": "Edytor PDF działający w całości w przeglądarce. Pliki nie opuszczają Twojego komputera: nie ma serwera, analityki ani śledzenia.",
     "licenseText": "Program jest wolnym oprogramowaniem na licencji GNU AGPL-3.0. Korzysta z silnika MuPDF (Artifex Software, AGPL-3.0).",
     "thirdParty": "Licencje użytych bibliotek",
-    "close": "Zamknij"
+    "close": "Zamknij",
+    "fontLicenses": "Licencje dołączonych fontów"
   },
   "errors": {
     "title": "Coś poszło nie tak",
@@ -160,7 +166,8 @@
     "render-failed": "Nie udało się wyświetlić strony.",
     "file-read-failed": "Nie udało się odczytać pliku. Sprawdź, czy nie jest otwarty w innym programie.",
     "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
-    "save-failed": "Nie udało się zapisać pliku. Spróbuj „Zapisz jako” i wybierz inne miejsce."
+    "save-failed": "Nie udało się zapisać pliku. Spróbuj „Zapisz jako” i wybierz inne miejsce.",
+    "font-invalid": "Tego pliku nie da się użyć jako fontu. Wybierz plik .ttf lub .otf."
   },
   "history": {
     "add": "dodanie obiektu",
@@ -170,12 +177,13 @@
     "style": "zmiana wyglądu",
     "reorder": "zmiana kolejności warstw",
     "paste": "wklejenie",
-    "duplicate": "duplikowanie"
+    "duplicate": "duplikowanie",
+    "edit-text": "edycja tekstu"
   },
   "properties": {
     "title": "Właściwości",
     "empty": "Zaznacz obiekt, aby zmienić jego wygląd, położenie lub rozmiar.",
-    "hint": "Narzędziem Prostokąt (R) dodasz pierwszy obiekt. Kliknij go narzędziem Zaznacz (V), aby przesuwać, zmieniać rozmiar uchwytami i obracać.",
+    "hint": "Narzędziami Tekst (T), Prostokąt (R) i Zamalowanie (W) dodasz obiekty. Kliknij obiekt narzędziem Zaznacz (V), aby go przesuwać, zmieniać rozmiar i obracać.",
     "shape": "Prostokąt",
     "position": "Położenie (pt)",
     "x": "X",
@@ -196,7 +204,32 @@
     "duplicate": "Duplikuj",
     "delete": "Usuń",
     "toFront": "Na wierzch",
-    "toBack": "Na spód"
+    "toBack": "Na spód",
+    "text": "Tekst",
+    "whiteout": "Zamalowanie",
+    "font": "Font",
+    "fontSize": "Rozmiar (pt)",
+    "textColor": "Kolor tekstu",
+    "bold": "Pogrubienie",
+    "italic": "Kursywa",
+    "underline": "Podkreślenie",
+    "align": "Wyrównanie",
+    "alignLeft": "Do lewej",
+    "alignCenter": "Do środka",
+    "alignRight": "Do prawej",
+    "alignJustify": "Wyjustuj",
+    "lineHeight": "Interlinia",
+    "boxWidth": "Szerokość ramki (pt)",
+    "addFontFile": "Wczytaj font z pliku…",
+    "addSystemFont": "Fonty z komputera…",
+    "styleMissing": "Ten font nie ma osobnej odmiany pogrubionej ani kursywy.",
+    "fontsBundled": "Fonty wbudowane",
+    "fontsCustom": "Twoje fonty",
+    "whiteoutColor": "Kolor zamalowania",
+    "pickColor": "Pobierz kolor z tła strony",
+    "pickHint": "Kliknij na stronie miejsce, z którego chcesz pobrać kolor.",
+    "whiteoutWarning": "Zamalowanie tylko zakrywa treść. Tekst i obrazy pod spodem nadal są w pliku – można je skopiować lub odsłonić. Aby trwale usunąć treść, użyj Redakcji.",
+    "textHint": "Kliknij dwukrotnie w ramkę, aby edytować tekst. Uchwytami po bokach zmienisz szerokość ramki."
   },
   "discard": {
     "title": "Masz niezapisane zmiany",
@@ -208,5 +241,20 @@
     "downloaded": "Plik „{{name}}” został pobrany do folderu Pobrane.",
     "saved": "Zapisano „{{name}}”.",
     "dismiss": "Zamknij"
+  },
+  "fonts": {
+    "fileTitle": "Wczytaj font",
+    "invalid": "Tego pliku nie da się użyć jako fontu. Wybierz plik .ttf lub .otf.",
+    "missingPolish": "Font „{{name}}” nie ma liter: {{letters}}. Tekst z tymi literami będzie wyświetlany niepoprawnie.",
+    "added": "Dodano font „{{name}}”.",
+    "systemTitle": "Fonty z komputera",
+    "systemDescription": "Przeglądarka zapyta o zgodę na dostęp do fontów zainstalowanych na tym komputerze. Wybrany font zostanie osadzony w zapisanym PDF-ie.",
+    "systemSearch": "Szukaj fontu",
+    "systemEmpty": "Nie znaleziono fontów.",
+    "systemLoading": "Wczytywanie listy fontów…",
+    "systemUse": "Użyj",
+    "systemDenied": "Przeglądarka nie dała dostępu do fontów z komputera.",
+    "close": "Zamknij",
+    "checkLicense": "Pamiętaj, że licencja fontu musi pozwalać na osadzanie go w dokumentach."
   }
 }

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { toAppError } from '../../application/errors';
+import { prepareExportResources } from '../../application/use-cases';
 import type { SaveOutcome } from '../../application/ports';
 import { logDev } from '../app/devLog';
 import { useServices } from '../app/services';
@@ -14,7 +15,7 @@ export interface SaveActions {
 }
 
 export function useSaveActions(): SaveActions {
-  const { writer, saver, editor } = useServices();
+  const { writer, saver, editor, fonts, loadTextLayout } = useServices();
 
   const run = useCallback(
     async (inPlace: boolean): Promise<boolean> => {
@@ -26,7 +27,9 @@ export function useSaveActions(): SaveActions {
       editorStore.setSaving(true);
       editorStore.showSaveNotice(null);
       try {
-        const bytes = await writer.exportDocument(document.info.id, editor.snapshot.model.objects);
+        const { objects } = editor.snapshot.model;
+        const resources = await prepareExportResources(objects, fonts, loadTextLayout);
+        const bytes = await writer.exportDocument(document.info.id, objects, resources);
         let outcome: SaveOutcome | null = null;
         if (inPlace && document.handle !== undefined && saver.canSaveInPlace) {
           outcome = await saver.saveToHandle(document.handle, bytes, document.fileName);
@@ -53,7 +56,7 @@ export function useSaveActions(): SaveActions {
         useEditorStore.getState().setSaving(false);
       }
     },
-    [writer, saver, editor],
+    [writer, saver, editor, fonts, loadTextLayout],
   );
 
   const save = useCallback(() => run(true), [run]);

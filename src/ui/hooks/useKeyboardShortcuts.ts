@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import type { EditorTool } from '../../application/ports';
 import { NUDGE_STEP, NUDGE_STEP_LARGE } from '../../application/use-cases';
 import { nextZoomStep, previousZoomStep } from '../../application/viewer';
 import { useEditorStore } from '../store/editorStore';
@@ -144,8 +145,10 @@ export function useKeyboardShortcuts(): void {
         editing.setTool('select');
         return true;
       }
-      if (!ctrl && !event.altKey && key === 'r') {
-        editing.setTool('rectangle');
+      const toolKeys: Record<string, EditorTool> = { r: 'rectangle', t: 'text', w: 'whiteout' };
+      const toolForKey = toolKeys[key];
+      if (!ctrl && !event.altKey && toolForKey !== undefined) {
+        editing.setTool(toolForKey);
         return true;
       }
       return false;

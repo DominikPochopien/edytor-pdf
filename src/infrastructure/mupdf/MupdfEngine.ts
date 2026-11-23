@@ -13,6 +13,7 @@ import type {
 } from '../../domain/document';
 import type { Rect } from '../../domain/geometry';
 import { normalizeRotation } from '../../domain/geometry';
+import type { ExportResources, FontCheck } from '../../application/ports';
 import type { EditObject } from '../../domain/objects';
 import { DocumentExporter } from './documentExporter';
 import { classifyEngineError, looksLikePdf } from './engineErrors';
@@ -39,6 +40,7 @@ const SEARCH_CONTEXT_CHARS = 40;
 /** Direction component below which a text line counts as horizontal. */
 const HORIZONTAL_TOLERANCE = 0.01;
 const WHITE = 255;
+const POLISH_LETTERS = 'ąćęłńóśźżĄĆĘŁŃÓŚŹŻ';
 /** A PDF rectangle is an array of four numbers. */
 const PDF_RECT_LENGTH = 4;
 const STEXT_OPTIONS = 'preserve-whitespace';
@@ -161,7 +163,11 @@ export class MupdfEngine {
   }
 
   /** Returns the bytes of the file to save: the original with the objects applied. */
-  exportDocument(id: DocumentId, objects: readonly EditObject[]): Result<Uint8Array> {
+  exportDocument(
+    id: DocumentId,
+    objects: readonly EditObject[],
+    resources: ExportResources,
+  ): Result<Uint8Array> {
     return this.guard(() => {
       const entry = this.documents.get(id);
       if (entry === undefined) {
@@ -171,7 +177,24 @@ export class MupdfEngine {
         entry.password === undefined
           ? { bytes: entry.bytes }
           : { bytes: entry.bytes, password: entry.password };
-      return ok(this.exporter.export(source, objects));
+      return ok(this.exporter.export(source, objects, resources));
+    });
+  }
+
+  /** Checks that a font file can be used and which Polish letters it lacks. */
+  inspectFont(bytes: Uint8Array): Result<FontCheck> {
+    return this.guard(() => {
+      let font: Mupdf.Font;
+      try {
+        font = new this.mupdf.Font('inspected', bytes);
+      } catch {
+        return ok<FontCheck>({ valid: false, missingPolish: '' });
+      }
+      const missing = Array.from(POLISH_LETTERS).filter(
+        (c) => font.encodeCharacter(c.codePointAt(0) ?? 0) === 0,
+      );
+      font.destroy();
+      return ok<FontCheck>({ valid: true, missingPolish: missing.join('') });
     });
   }
 

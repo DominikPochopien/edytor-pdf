@@ -5,7 +5,7 @@ import fs from "node:fs";
 fs.mkdirSync("scripts/spike/out", { recursive: true });
 const POLISH = "Zażółć gęślą jaźń – ĄĆĘŁŃÓŚŹŻ ąćęłńóśźż";
 const src = fs.readFileSync("public/przyklad.pdf");
-const fontData = fs.readFileSync("public/fonts/NotoSans-Regular.ttf");
+const fontData = fs.readFileSync("public/fonts/noto-sans/NotoSans-regular.ttf");
 
 function log(label, value) {
   console.log(`[${label}]`, value);

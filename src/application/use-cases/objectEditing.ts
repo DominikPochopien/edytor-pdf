@@ -6,6 +6,7 @@ import type {
   HexColor,
   ObjectId,
   ShapeObject,
+  WhiteoutRect,
 } from '../../domain/objects';
 import {
   copiesForPaste,
@@ -43,22 +44,45 @@ export const NUDGE_STEP_LARGE = 10;
 export type IdGenerator = () => ObjectId;
 export type PageLookup = (pageIndex: number) => PageInfo | undefined;
 
+/** Colour of new whiteout rectangles (paper white). */
+export const DEFAULT_WHITEOUT_COLOR: HexColor = '#ffffff';
+
+function drawnFrame(display: DisplayFrame): DisplayFrame {
+  const small = display.width < MIN_DRAWN_SIZE || display.height < MIN_DRAWN_SIZE;
+  return small ? { ...display, ...DEFAULT_SHAPE_SIZE } : display;
+}
+
 export function createRectangle(
   page: PageInfo,
   display: DisplayFrame,
   newId: IdGenerator,
 ): Command {
-  const small = display.width < MIN_DRAWN_SIZE || display.height < MIN_DRAWN_SIZE;
-  const frameOnScreen = small ? { ...display, ...DEFAULT_SHAPE_SIZE } : display;
   const shape: ShapeObject = {
     id: newId(),
     kind: 'shape',
     shape: 'rectangle',
     pageIndex: page.index,
-    frame: displayToFrame(frameOnScreen, page),
+    frame: displayToFrame(drawnFrame(display), page),
     ...DEFAULT_SHAPE_STYLE,
   };
   return new AddObjectsCommand([shape]);
+}
+
+export function createWhiteout(
+  page: PageInfo,
+  display: DisplayFrame,
+  newId: IdGenerator,
+  color: HexColor = DEFAULT_WHITEOUT_COLOR,
+): Command {
+  const whiteout: WhiteoutRect = {
+    id: newId(),
+    kind: 'whiteout',
+    pageIndex: page.index,
+    frame: displayToFrame(drawnFrame(display), page),
+    opacity: 1,
+    color,
+  };
+  return new AddObjectsCommand([whiteout]);
 }
 
 export function transformObject(
@@ -173,6 +197,26 @@ export interface StylePatch {
   readonly fill?: HexColor | null;
   readonly strokeWidth?: number;
   readonly opacity?: number;
+  /** Whiteout colour. */
+  readonly color?: HexColor;
+}
+
+function applyStyle(object: EditObject, patch: StylePatch): EditObject {
+  const opacity = patch.opacity ?? object.opacity;
+  switch (object.kind) {
+    case 'shape':
+      return {
+        ...object,
+        opacity,
+        stroke: patch.stroke === undefined ? object.stroke : patch.stroke,
+        fill: patch.fill === undefined ? object.fill : patch.fill,
+        strokeWidth: patch.strokeWidth ?? object.strokeWidth,
+      };
+    case 'whiteout':
+      return { ...object, opacity, color: patch.color ?? object.color };
+    case 'text':
+      return { ...object, opacity };
+  }
 }
 
 export function restyleObject(
@@ -186,7 +230,7 @@ export function restyleObject(
     return null;
   }
   const field = Object.keys(patch).join(',');
-  return new UpdateObjectsCommand([object], [{ ...object, ...patch }], 'style', {
+  return new UpdateObjectsCommand([object], [applyStyle(object, patch)], 'style', {
     key: `style:${id}:${field}`,
     at: now,
     windowMs: MERGE_WINDOW_MS,

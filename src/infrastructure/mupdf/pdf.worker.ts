@@ -4,6 +4,7 @@ import wasmUrl from '@mupdf-wasm?url';
 import type { Result } from '../../application/errors';
 import { fail, ok } from '../../application/errors';
 import type { DocumentId, PageLink, SearchResult, TextLine } from '../../domain/document';
+import type { ExportResources, FontCheck } from '../../application/ports';
 import type { EditObject } from '../../domain/objects';
 import { fetchWithProgress } from './fetchWithProgress';
 import type { EngineOpenResult } from './MupdfEngine';
@@ -73,12 +74,20 @@ const api = {
     return withEngine((e) => e.search(id, query, maxHits));
   },
 
+  inspectFont(bytes: Uint8Array): Result<FontCheck> {
+    return withEngine((e) => e.inspectFont(bytes));
+  },
+
   getLinks(id: DocumentId, pageIndex: number): Result<PageLink[]> {
     return withEngine((e) => e.getLinks(id, pageIndex));
   },
 
-  exportDocument(id: DocumentId, objects: readonly EditObject[]): Result<Uint8Array> {
-    const result = withEngine((e) => e.exportDocument(id, objects));
+  exportDocument(
+    id: DocumentId,
+    objects: readonly EditObject[],
+    resources: ExportResources,
+  ): Result<Uint8Array> {
+    const result = withEngine((e) => e.exportDocument(id, objects, resources));
     return result.ok ? Comlink.transfer(result, [result.value.buffer]) : result;
   },
 };

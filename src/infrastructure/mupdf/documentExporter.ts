@@ -1,7 +1,8 @@
 import type * as Mupdf from 'mupdf';
+import type { ExportResources } from '../../application/ports';
 import type { EditObject } from '../../domain/objects';
 import type { MupdfModule } from './MupdfEngine';
-import { paintObject } from './objectPainter';
+import { FontCache, paintObject } from './objectPainter';
 
 /** Options for the saved file: drop unused objects, compress streams. */
 export const SAVE_OPTIONS = 'garbage=compact,compress';
@@ -50,17 +51,27 @@ function concatStreams(streams: readonly Mupdf.PDFObject[]): Uint8Array {
 export class DocumentExporter {
   constructor(private readonly mupdf: MupdfModule) {}
 
-  export(source: ExportSource, objects: readonly EditObject[]): Uint8Array {
+  export(
+    source: ExportSource,
+    objects: readonly EditObject[],
+    resources: ExportResources,
+  ): Uint8Array {
     const doc = this.openCopy(source);
+    const fonts = new FontCache(this.mupdf, resources.fonts);
     try {
       for (const [pageIndex, pageObjects] of this.groupByPage(objects)) {
         if (pageIndex >= 0 && pageIndex < doc.countPages()) {
-          this.embedObjects(doc, pageIndex, pageObjects);
+          this.embedObjects(doc, pageIndex, pageObjects, fonts, resources);
         }
+      }
+      if (Object.keys(resources.fonts).length > 0) {
+        // Keep only the glyphs that are used (Polish letters included).
+        doc.subsetFonts();
       }
       // Copy out of WebAssembly memory immediately; later calls may reuse it.
       return doc.saveToBuffer(SAVE_OPTIONS).asUint8Array().slice();
     } finally {
+      fonts.destroy();
       doc.destroy();
     }
   }
@@ -86,6 +97,8 @@ export class DocumentExporter {
     doc: Mupdf.PDFDocument,
     pageIndex: number,
     objects: readonly EditObject[],
+    fonts: FontCache,
+    resources: ExportResources,
   ): void {
     const { Matrix } = this.mupdf;
     const pageObject = doc.findPage(pageIndex);
@@ -96,8 +109,9 @@ export class DocumentExporter {
     const pdfToWriter = Matrix.invert([1, 0, 0, -1, x0, y1]);
 
     const form = this.drawForm(doc, width, height, (device) => {
+      const context = { mupdf: this.mupdf, device, fonts, resources };
       for (const object of objects) {
-        paintObject(this.mupdf, device, object, pdfToWriter);
+        paintObject(context, object, pdfToWriter);
       }
     });
     form.put('Matrix', [1, 0, 0, 1, x0, y0]);

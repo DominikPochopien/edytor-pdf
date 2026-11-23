@@ -1,5 +1,6 @@
 import * as mupdf from 'mupdf';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { NO_EXPORT_RESOURCES } from '../../src/application/ports';
 import type { DocumentInfo, PageInfo } from '../../src/domain/document';
 import type { ShapeObject } from '../../src/domain/objects';
 import { displayToFrame } from '../../src/domain/objects';
@@ -38,7 +39,7 @@ function squareAt(page: PageInfo, x: number, y: number, fill = '#ff0000'): Shape
 }
 
 function exportOk(info: DocumentInfo, objects: ShapeObject[]): Uint8Array {
-  const result = engine.exportDocument(info.id, objects);
+  const result = engine.exportDocument(info.id, objects, NO_EXPORT_RESOURCES);
   if (!result.ok) {
     throw new Error(result.detail);
   }

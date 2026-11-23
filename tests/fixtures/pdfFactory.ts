@@ -9,7 +9,7 @@ export const POLISH_SENTENCE = 'Zażółć gęślą jaźń – ĄĆĘŁŃÓŚŹ�
 export const A4: [number, number, number, number] = [0, 0, 595, 842];
 
 const FONT_PATH = fileURLToPath(
-  new URL('../../public/fonts/NotoSans-Regular.ttf', import.meta.url),
+  new URL('../../public/fonts/noto-sans/NotoSans-regular.ttf', import.meta.url),
 );
 const SAMPLE_PATH = fileURLToPath(new URL('../../public/przyklad.pdf', import.meta.url));
 
