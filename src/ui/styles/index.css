@@ -1,0 +1,80 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-accent-50: oklch(0.97 0.02 255);
+  --color-accent-100: oklch(0.93 0.04 255);
+  --color-accent-500: oklch(0.58 0.17 255);
+  --color-accent-600: oklch(0.51 0.18 258);
+  --color-accent-700: oklch(0.45 0.17 260);
+  --font-sans:
+    'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, 'Noto Sans', Roboto, sans-serif;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-neutral-100 text-neutral-900 antialiased dark:bg-neutral-900 dark:text-neutral-100;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent-500;
+  }
+}
+
+/* Selectable, invisible text over the rendered page (like the PDF.js text layer). */
+.text-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  line-height: 1;
+  forced-color-adjust: none;
+}
+
+.text-layer > span {
+  position: absolute;
+  white-space: pre;
+  color: transparent;
+  transform-origin: 0 0;
+  cursor: text;
+}
+
+.text-layer > span::selection {
+  background: color-mix(in oklch, var(--color-accent-500) 35%, transparent);
+}
+
+.search-hit {
+  position: absolute;
+  border-radius: 2px;
+  background: rgb(250 204 21 / 0.4);
+  pointer-events: none;
+}
+
+.search-hit[data-active='true'] {
+  background: rgb(249 115 22 / 0.5);
+  outline: 2px solid rgb(234 88 12);
+}
+
+@keyframes progress-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

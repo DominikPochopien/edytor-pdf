@@ -1,0 +1,10 @@
+dist
+coverage
+node_modules
+playwright-report
+test-results
+public
+samples
+scripts/spike
+docs/SPEC.md
+package-lock.json

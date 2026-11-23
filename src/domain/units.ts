@@ -1,0 +1,3 @@
+export const BYTES_PER_KIB = 1024;
+export const BYTES_PER_MIB = BYTES_PER_KIB * BYTES_PER_KIB;
+export const BYTES_PER_GIB = BYTES_PER_MIB * BYTES_PER_KIB;

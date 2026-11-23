@@ -1,0 +1,113 @@
+name: Testy i publikacja
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The repository name becomes the path on GitHub Pages: https://<user>.github.io/<repo>/
+  BASE_PATH: /${{ github.event.repository.name }}/
+  SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+
+jobs:
+  test:
+    name: Lint, build i testy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalacja zależności
+        run: npm ci
+
+      - name: Lint i formatowanie
+        run: npm run lint
+
+      - name: Budowanie
+        run: npm run build
+
+      - name: Testy jednostkowe i integracyjne
+        run: npm test
+
+      - name: Instalacja przeglądarek do testów
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Testy end-to-end (Chromium i Firefox)
+        run: npx playwright test
+
+      - name: Raport z testów end-to-end
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+      - name: Paczka dla GitHub Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    name: Publikacja na GitHub Pages
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  smoke:
+    name: Test pod opublikowanym adresem
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Oczekiwanie, aż nowa wersja będzie dostępna
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          for attempt in $(seq 1 24); do
+            if curl -fsS -o /dev/null "$PAGE_URL"; then exit 0; fi
+            sleep 5
+          done
+          echo "Strona nie odpowiada pod adresem $PAGE_URL" && exit 1
+
+      - name: Otwarcie i renderowanie pod docelowym adresem
+        env:
+          E2E_BASE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: npx playwright test

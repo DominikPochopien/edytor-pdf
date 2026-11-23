@@ -1,0 +1,139 @@
+{
+  "app": {
+    "name": "Edytor PDF",
+    "tagline": "Edytuj pliki PDF w przeglądarce – bez instalacji i bez konta.",
+    "privacy": "Twoje pliki nie są nigdzie wysyłane – wszystko dzieje się na Twoim komputerze.",
+    "sourceCode": "Kod źródłowy",
+    "license": "Licencja AGPL-3.0",
+    "version": "Wersja {{version}}"
+  },
+  "welcome": {
+    "open": "Otwórz PDF",
+    "dropHint": "albo przeciągnij plik PDF tutaj",
+    "dropActive": "Upuść plik, aby go otworzyć",
+    "trySample": "Wypróbuj na przykładowym pliku",
+    "recentTitle": "Ostatnie pliki",
+    "recentHint": "Lista jest zapamiętana tylko w tej przeglądarce.",
+    "recentOpen": "Otwórz {{name}}",
+    "recentRemove": "Usuń {{name}} z listy",
+    "recentClear": "Wyczyść listę",
+    "recentMissing": "Tego pliku nie ma już w pamięci przeglądarki.",
+    "openedAt": "otwarty {{date}}"
+  },
+  "engine": {
+    "loading": "Przygotowywanie silnika PDF… {{percent}}%",
+    "loadingTitle": "Wczytywanie silnika PDF",
+    "loadingHint": "Za pierwszym razem może to potrwać kilka sekund. Później działa szybciej.",
+    "ready": "Silnik PDF gotowy",
+    "openingFile": "Otwieranie pliku…"
+  },
+  "browser": {
+    "unsupportedTitle": "Ta przeglądarka nie obsługuje edytora",
+    "unsupportedText": "Brakuje funkcji: {{features}}. Edytor najlepiej działa w aktualnym Chrome lub Edge. Działa też w Firefoksie.",
+    "mobileText": "Edytor jest przeznaczony na komputer. Na telefonie możesz przeglądać pliki, ale edycja może być niewygodna.",
+    "dismiss": "Rozumiem"
+  },
+  "password": {
+    "title": "Plik jest chroniony hasłem",
+    "description": "Wpisz hasło, aby otworzyć „{{name}}”.",
+    "label": "Hasło",
+    "wrong": "Hasło jest nieprawidłowe. Spróbuj ponownie.",
+    "submit": "Otwórz",
+    "cancel": "Anuluj"
+  },
+  "toolbar": {
+    "label": "Pasek narzędzi",
+    "open": "Otwórz plik",
+    "close": "Zamknij plik",
+    "zoomIn": "Powiększ",
+    "zoomOut": "Pomniejsz",
+    "zoomMenu": "Powiększenie: {{percent}}%",
+    "fitWidth": "Dopasuj do szerokości",
+    "fitPage": "Dopasuj do strony",
+    "actualSize": "Rozmiar rzeczywisty (100%)",
+    "toggleSidebar": "Pokaż lub ukryj panel boczny",
+    "search": "Szukaj w dokumencie",
+    "help": "Pomoc",
+    "shortcuts": "Skróty klawiszowe",
+    "about": "O programie"
+  },
+  "sidebar": {
+    "label": "Panel boczny",
+    "thumbnails": "Miniatury",
+    "search": "Wyszukiwanie",
+    "pageThumbnail": "Strona {{page}}"
+  },
+  "search": {
+    "placeholder": "Szukaj w dokumencie…",
+    "label": "Szukany tekst",
+    "next": "Następny wynik",
+    "previous": "Poprzedni wynik",
+    "searching": "Szukam…",
+    "noResults": "Brak wyników.",
+    "count_one": "{{count}} wynik",
+    "count_few": "{{count}} wyniki",
+    "count_many": "{{count}} wyników",
+    "count_other": "{{count}} wyniku",
+    "truncated": "Pokazano pierwsze {{count}} wyników.",
+    "position": "Wynik {{current}} z {{total}}",
+    "page": "Strona {{page}}",
+    "clear": "Wyczyść"
+  },
+  "status": {
+    "label": "Pasek stanu",
+    "page": "Strona",
+    "of": "z {{count}}",
+    "goToPage": "Przejdź do strony",
+    "zoom": "Powiększenie {{percent}}%",
+    "repaired": "Plik był uszkodzony i został naprawiony podczas otwierania."
+  },
+  "page": {
+    "label": "Strona {{page}} z {{count}}",
+    "loading": "Wczytywanie strony {{page}}…",
+    "renderError": "Nie udało się wyświetlić tej strony."
+  },
+  "link": {
+    "openTitle": "Otworzyć link?",
+    "openDescription": "Dokument prowadzi do strony internetowej. Sprawdź adres, zanim przejdziesz dalej:",
+    "open": "Otwórz w nowej karcie",
+    "cancel": "Anuluj",
+    "blocked": "Ten link nie został otwarty, bo nie jest zwykłym adresem strony internetowej.",
+    "toPage": "Przejdź do strony {{page}}"
+  },
+  "shortcuts": {
+    "title": "Skróty klawiszowe",
+    "open": "Otwórz plik",
+    "find": "Szukaj w dokumencie",
+    "zoomIn": "Powiększ",
+    "zoomOut": "Pomniejsz",
+    "zoomReset": "Rozmiar 100%",
+    "zoomWheel": "Powiększanie kółkiem myszy",
+    "nextHit": "Następny wynik wyszukiwania",
+    "previousHit": "Poprzedni wynik wyszukiwania",
+    "help": "Ta lista skrótów",
+    "close": "Zamknij"
+  },
+  "about": {
+    "title": "O programie",
+    "description": "Edytor PDF działający w całości w przeglądarce. Pliki nie opuszczają Twojego komputera: nie ma serwera, analityki ani śledzenia.",
+    "licenseText": "Program jest wolnym oprogramowaniem na licencji GNU AGPL-3.0. Korzysta z silnika MuPDF (Artifex Software, AGPL-3.0).",
+    "thirdParty": "Licencje użytych bibliotek",
+    "close": "Zamknij"
+  },
+  "errors": {
+    "title": "Coś poszło nie tak",
+    "dismiss": "Zamknij komunikat",
+    "engine-load-failed": "Nie udało się wczytać silnika PDF. Sprawdź połączenie z internetem i odśwież stronę.",
+    "browser-unsupported": "Ta przeglądarka nie obsługuje edytora. Użyj aktualnego Chrome, Edge lub Firefoksa.",
+    "not-a-pdf": "To nie jest plik PDF. Wybierz plik z rozszerzeniem .pdf.",
+    "file-corrupted": "Plik PDF jest uszkodzony i nie da się go otworzyć.",
+    "file-too-large": "Plik jest za duży dla pamięci przeglądarki. Spróbuj podzielić go na mniejsze części innym programem.",
+    "out-of-memory": "Zabrakło pamięci przeglądarki. Zamknij inne karty albo otwórz mniejszy plik.",
+    "password-required": "Ten plik wymaga hasła.",
+    "password-incorrect": "Hasło jest nieprawidłowe.",
+    "document-closed": "Dokument został zamknięty. Otwórz go ponownie.",
+    "render-failed": "Nie udało się wyświetlić strony.",
+    "file-read-failed": "Nie udało się odczytać pliku. Sprawdź, czy nie jest otwarty w innym programie.",
+    "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+  }
+}
