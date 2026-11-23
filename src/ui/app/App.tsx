@@ -1,16 +1,20 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { lazy, Suspense } from 'react';
 import { AboutDialog } from '../components/dialogs/AboutDialog';
+import { DiscardChangesDialog } from '../components/dialogs/DiscardChangesDialog';
 import { LinkConfirmDialog } from '../components/dialogs/LinkConfirmDialog';
 import { PasswordDialog } from '../components/dialogs/PasswordDialog';
 import { ShortcutsDialog } from '../components/dialogs/ShortcutsDialog';
 import { MobileNotice } from '../components/feedback/BrowserNotices';
 import { ErrorToast } from '../components/feedback/ErrorToast';
 import { OpeningOverlay } from '../components/feedback/OpeningOverlay';
+import { SaveNotice } from '../components/feedback/SaveNotice';
 import { WelcomeScreen } from '../components/welcome/WelcomeScreen';
+import { useEditorSync } from '../hooks/useEditorSync';
 import { useEngineLoader } from '../hooks/useEngineLoader';
 import { useFileDrop } from '../hooks/useFileDrop';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { useUnsavedChangesGuard } from '../hooks/useUnsavedChangesGuard';
 import { useViewerStore } from '../store/viewerStore';
 import { useServices } from './services';
 
@@ -25,6 +29,8 @@ export function App() {
   const { isMobile } = useServices();
   const document = useViewerStore((s) => s.document);
   useEngineLoader();
+  useEditorSync();
+  useUnsavedChangesGuard();
   useKeyboardShortcuts();
   const dragging = useFileDrop();
 
@@ -47,6 +53,8 @@ export function App() {
       <LinkConfirmDialog />
       <ShortcutsDialog />
       <AboutDialog />
+      <DiscardChangesDialog />
+      <SaveNotice />
       <ErrorToast />
     </Tooltip.Provider>
   );

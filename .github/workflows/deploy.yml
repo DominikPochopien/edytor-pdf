@@ -40,6 +40,9 @@ jobs:
       - name: Budowanie
         run: npm run build
 
+      - name: qpdf do sprawdzania struktury zapisanych PDF-ów
+        run: sudo apt-get update && sudo apt-get install -y qpdf
+
       - name: Testy jednostkowe i integracyjne
         run: npm test
 

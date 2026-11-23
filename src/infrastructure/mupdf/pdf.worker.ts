@@ -4,6 +4,7 @@ import wasmUrl from '@mupdf-wasm?url';
 import type { Result } from '../../application/errors';
 import { fail, ok } from '../../application/errors';
 import type { DocumentId, PageLink, SearchResult, TextLine } from '../../domain/document';
+import type { EditObject } from '../../domain/objects';
 import { fetchWithProgress } from './fetchWithProgress';
 import type { EngineOpenResult } from './MupdfEngine';
 import { MupdfEngine } from './MupdfEngine';
@@ -74,6 +75,11 @@ const api = {
 
   getLinks(id: DocumentId, pageIndex: number): Result<PageLink[]> {
     return withEngine((e) => e.getLinks(id, pageIndex));
+  },
+
+  exportDocument(id: DocumentId, objects: readonly EditObject[]): Result<Uint8Array> {
+    const result = withEngine((e) => e.exportDocument(id, objects));
+    return result.ok ? Comlink.transfer(result, [result.value.buffer]) : result;
   },
 };
 

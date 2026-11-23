@@ -5,6 +5,19 @@ import { Modal } from '../common/Modal';
 
 const SHORTCUTS = [
   ['Ctrl+O', 'shortcuts.open'],
+  ['Ctrl+S', 'shortcuts.save'],
+  ['Ctrl+Shift+S', 'shortcuts.saveAs'],
+  ['Ctrl+Z', 'shortcuts.undo'],
+  ['Ctrl+Y / Ctrl+Shift+Z', 'shortcuts.redo'],
+  ['V', 'shortcuts.toolSelect'],
+  ['R', 'shortcuts.toolRectangle'],
+  ['Shift', 'shortcuts.square'],
+  ['Delete', 'shortcuts.delete'],
+  ['Ctrl+D', 'shortcuts.duplicate'],
+  ['Ctrl+C / Ctrl+X / Ctrl+V', 'shortcuts.copyPaste'],
+  ['← ↑ → ↓', 'shortcuts.nudge'],
+  ['Ctrl+] / Ctrl+[', 'shortcuts.arrange'],
+  ['Esc', 'shortcuts.deselect'],
   ['Ctrl+F', 'shortcuts.find'],
   ['Enter / F3', 'shortcuts.nextHit'],
   ['Shift+Enter / Shift+F3', 'shortcuts.previousHit'],
@@ -27,8 +40,9 @@ export function ShortcutsDialog() {
         openDialog(value ? 'shortcuts' : null);
       }}
       title={t('shortcuts.title')}
+      wide
     >
-      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+      <dl className="max-h-[60vh] overflow-y-auto grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
         {SHORTCUTS.map(([keys, label]) => (
           <div key={keys} className="contents">
             <dt>

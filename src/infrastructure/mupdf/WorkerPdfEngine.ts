@@ -7,11 +7,13 @@ import type {
   PageBitmap,
   PdfDocumentLoader,
   PdfEngineLoader,
+  PdfDocumentWriter,
   PdfRenderer,
   PdfTextExtractor,
   SearchOptions,
 } from '../../application/ports';
 import type { DocumentId, PageLink, SearchResult, TextLine } from '../../domain/document';
+import type { EditObject } from '../../domain/objects';
 import type { PdfWorkerApi } from './pdf.worker';
 
 /** A broken or hostile file must not block the app forever. */
@@ -36,7 +38,7 @@ function createWorker(): Worker {
  * freezes. Implements the application ports used by the viewer.
  */
 export class WorkerPdfEngine
-  implements PdfEngineLoader, PdfDocumentLoader, PdfRenderer, PdfTextExtractor
+  implements PdfEngineLoader, PdfDocumentLoader, PdfRenderer, PdfTextExtractor, PdfDocumentWriter
 {
   private worker: Worker;
   private remote: Comlink.Remote<PdfWorkerApi>;
@@ -115,6 +117,10 @@ export class WorkerPdfEngine
 
   async getLinks(id: DocumentId, pageIndex: number): Promise<readonly PageLink[]> {
     return unwrap(await this.remote.getLinks(id, pageIndex));
+  }
+
+  async exportDocument(id: DocumentId, objects: readonly EditObject[]): Promise<Uint8Array> {
+    return unwrap(await this.remote.exportDocument(id, objects));
   }
 
   private async startLoading(): Promise<void> {

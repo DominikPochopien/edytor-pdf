@@ -55,7 +55,19 @@
     "search": "Szukaj w dokumencie",
     "help": "Pomoc",
     "shortcuts": "Skróty klawiszowe",
-    "about": "O programie"
+    "about": "O programie",
+    "file": "Plik",
+    "save": "Zapisz",
+    "saveAs": "Zapisz jako…",
+    "saving": "Zapisywanie…",
+    "undo": "Cofnij",
+    "redo": "Ponów",
+    "undoWhat": "Cofnij: {{what}}",
+    "redoWhat": "Ponów: {{what}}",
+    "tools": "Narzędzia",
+    "toolSelect": "Zaznacz i przesuwaj",
+    "toolRectangle": "Prostokąt",
+    "unsaved": "Niezapisane zmiany"
   },
   "sidebar": {
     "label": "Panel boczny",
@@ -111,7 +123,20 @@
     "nextHit": "Następny wynik wyszukiwania",
     "previousHit": "Poprzedni wynik wyszukiwania",
     "help": "Ta lista skrótów",
-    "close": "Zamknij"
+    "close": "Zamknij",
+    "save": "Zapisz",
+    "saveAs": "Zapisz jako",
+    "undo": "Cofnij",
+    "redo": "Ponów",
+    "toolSelect": "Narzędzie Zaznacz",
+    "toolRectangle": "Narzędzie Prostokąt",
+    "delete": "Usuń zaznaczony obiekt",
+    "duplicate": "Duplikuj",
+    "copyPaste": "Kopiuj / wytnij / wklej",
+    "nudge": "Przesuń o 1 pt (z Shift: 10 pt)",
+    "arrange": "Na wierzch / na spód",
+    "deselect": "Odznacz, wróć do narzędzia Zaznacz",
+    "square": "Kwadrat zamiast prostokąta (podczas rysowania)"
   },
   "about": {
     "title": "O programie",
@@ -134,6 +159,54 @@
     "document-closed": "Dokument został zamknięty. Otwórz go ponownie.",
     "render-failed": "Nie udało się wyświetlić strony.",
     "file-read-failed": "Nie udało się odczytać pliku. Sprawdź, czy nie jest otwarty w innym programie.",
-    "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+    "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+    "save-failed": "Nie udało się zapisać pliku. Spróbuj „Zapisz jako” i wybierz inne miejsce."
+  },
+  "history": {
+    "add": "dodanie obiektu",
+    "remove": "usunięcie",
+    "move": "przesunięcie",
+    "transform": "zmiana rozmiaru lub obrotu",
+    "style": "zmiana wyglądu",
+    "reorder": "zmiana kolejności warstw",
+    "paste": "wklejenie",
+    "duplicate": "duplikowanie"
+  },
+  "properties": {
+    "title": "Właściwości",
+    "empty": "Zaznacz obiekt, aby zmienić jego wygląd, położenie lub rozmiar.",
+    "hint": "Narzędziem Prostokąt (R) dodasz pierwszy obiekt. Kliknij go narzędziem Zaznacz (V), aby przesuwać, zmieniać rozmiar uchwytami i obracać.",
+    "shape": "Prostokąt",
+    "position": "Położenie (pt)",
+    "x": "X",
+    "y": "Y",
+    "size": "Rozmiar (pt)",
+    "width": "Szerokość",
+    "height": "Wysokość",
+    "rotation": "Obrót (°)",
+    "stroke": "Obrys",
+    "strokeColor": "Kolor obrysu",
+    "strokeWidth": "Grubość obrysu (pt)",
+    "noStroke": "Bez obrysu",
+    "fill": "Wypełnienie",
+    "fillColor": "Kolor wypełnienia",
+    "noFill": "Bez wypełnienia",
+    "opacity": "Krycie (%)",
+    "arrange": "Układ",
+    "duplicate": "Duplikuj",
+    "delete": "Usuń",
+    "toFront": "Na wierzch",
+    "toBack": "Na spód"
+  },
+  "discard": {
+    "title": "Masz niezapisane zmiany",
+    "description": "Jeśli teraz zamkniesz plik, zmiany zostaną utracone.",
+    "confirm": "Odrzuć zmiany",
+    "cancel": "Wróć do edycji"
+  },
+  "save": {
+    "downloaded": "Plik „{{name}}” został pobrany do folderu Pobrane.",
+    "saved": "Zapisano „{{name}}”.",
+    "dismiss": "Zamknij"
   }
 }

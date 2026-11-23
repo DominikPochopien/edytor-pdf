@@ -3,11 +3,16 @@ import {
   ChevronDown,
   CircleHelp,
   FileText,
-  FolderOpen,
-  Keyboard,
   Info,
+  Keyboard,
+  LoaderCircle,
+  MousePointer2,
   PanelLeft,
+  Redo2,
+  Save,
   Search,
+  Square,
+  Undo2,
   X,
   ZoomIn,
   ZoomOut,
@@ -20,6 +25,9 @@ import {
   zoomToPercent,
 } from '../../../application/viewer';
 import { useDocumentActions } from '../../hooks/useDocumentActions';
+import { useEditorActions } from '../../hooks/useEditorActions';
+import { useSaveActions } from '../../hooks/useSaveActions';
+import { useEditorStore } from '../../store/editorStore';
 import { useViewerStore } from '../../store/viewerStore';
 import { IconButton } from '../common/IconButton';
 
@@ -118,9 +126,112 @@ function HelpMenu() {
   );
 }
 
-export function Toolbar() {
+function FileMenu() {
   const { t } = useTranslation();
   const { openFromPicker, closeDocument } = useDocumentActions();
+  const { save, saveAs } = useSaveActions();
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger className="inline-flex h-9 items-center gap-1 rounded-md px-2 text-sm font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700">
+        {t('toolbar.file')}
+        <ChevronDown aria-hidden className="size-4 opacity-60" />
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content className={menuContent} sideOffset={4} align="start">
+          <DropdownMenu.Item className={menuItem} onSelect={() => void openFromPicker()}>
+            {t('toolbar.open')}
+            <kbd className="ml-auto text-xs opacity-60">Ctrl+O</kbd>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item className={menuItem} onSelect={() => void save()}>
+            {t('toolbar.save')}
+            <kbd className="ml-auto text-xs opacity-60">Ctrl+S</kbd>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item className={menuItem} onSelect={() => void saveAs()}>
+            {t('toolbar.saveAs')}
+            <kbd className="ml-auto pl-4 text-xs opacity-60">Ctrl+Shift+S</kbd>
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator className="my-1 h-px bg-neutral-200 dark:bg-neutral-700" />
+          <DropdownMenu.Item className={menuItem} onSelect={() => void closeDocument()}>
+            {t('toolbar.close')}
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+}
+
+function HistoryButtons() {
+  const { t } = useTranslation();
+  const { undo, redo } = useEditorActions();
+  const { canUndo, canRedo, undoLabel, redoLabel } = useEditorStore((s) => s.snapshot);
+  return (
+    <>
+      <IconButton
+        label={
+          undoLabel === null
+            ? t('toolbar.undo')
+            : t('toolbar.undoWhat', { what: t(`history.${undoLabel}`) })
+        }
+        shortcut="Ctrl+Z"
+        icon={<Undo2 aria-hidden className="size-5" />}
+        disabled={!canUndo}
+        onClick={undo}
+        data-testid="undo"
+      />
+      <IconButton
+        label={
+          redoLabel === null
+            ? t('toolbar.redo')
+            : t('toolbar.redoWhat', { what: t(`history.${redoLabel}`) })
+        }
+        shortcut="Ctrl+Y"
+        icon={<Redo2 aria-hidden className="size-5" />}
+        disabled={!canRedo}
+        onClick={redo}
+        data-testid="redo"
+      />
+    </>
+  );
+}
+
+function ToolButtons() {
+  const { t } = useTranslation();
+  const tool = useEditorStore((s) => s.tool);
+  const { setTool } = useEditorActions();
+  return (
+    <div role="group" aria-label={t('toolbar.tools')} className="flex items-center gap-1">
+      <IconButton
+        label={t('toolbar.toolSelect')}
+        shortcut="V"
+        icon={<MousePointer2 aria-hidden className="size-5" />}
+        active={tool === 'select'}
+        aria-pressed={tool === 'select'}
+        onClick={() => {
+          setTool('select');
+        }}
+      />
+      <IconButton
+        label={t('toolbar.toolRectangle')}
+        shortcut="R"
+        icon={<Square aria-hidden className="size-5" />}
+        active={tool === 'rectangle'}
+        aria-pressed={tool === 'rectangle'}
+        onClick={() => {
+          setTool('rectangle');
+        }}
+      />
+    </div>
+  );
+}
+
+const separator = <div aria-hidden className="mx-1 h-6 w-px bg-neutral-200 dark:bg-neutral-700" />;
+
+export function Toolbar() {
+  const { t } = useTranslation();
+  const { closeDocument } = useDocumentActions();
+  const { save } = useSaveActions();
+  const saving = useEditorStore((s) => s.saving);
+  const dirty = useEditorStore((s) => s.snapshot.dirty);
   const fileName = useViewerStore((s) => s.document?.fileName ?? '');
   const zoom = useViewerStore((s) => s.zoom);
   const setZoom = useViewerStore((s) => s.setZoom);
@@ -141,16 +252,37 @@ export function Toolbar() {
         aria-pressed={sidebarOpen}
         onClick={toggleSidebar}
       />
+      <FileMenu />
       <IconButton
-        label={t('toolbar.open')}
-        shortcut="Ctrl+O"
-        icon={<FolderOpen aria-hidden className="size-5" />}
-        onClick={() => void openFromPicker()}
+        label={saving ? t('toolbar.saving') : t('toolbar.save')}
+        shortcut="Ctrl+S"
+        icon={
+          saving ? (
+            <LoaderCircle aria-hidden className="size-5 animate-spin" />
+          ) : (
+            <Save aria-hidden className="size-5" />
+          )
+        }
+        disabled={saving}
+        onClick={() => void save()}
       />
+      <HistoryButtons />
+      {separator}
+      <ToolButtons />
+      {separator}
       <div className="mx-2 flex min-w-0 items-center gap-2" title={fileName}>
         <FileText aria-hidden className="size-4 shrink-0 text-neutral-400" />
-        <span className="max-w-72 truncate text-sm font-medium" data-testid="file-name">
-          {fileName}
+        <span className="max-w-56 truncate text-sm font-medium">
+          {dirty && (
+            <span
+              aria-label={t('toolbar.unsaved')}
+              title={t('toolbar.unsaved')}
+              data-testid="dirty-marker"
+            >
+              *{' '}
+            </span>
+          )}
+          <span data-testid="file-name">{fileName}</span>
         </span>
       </div>
 

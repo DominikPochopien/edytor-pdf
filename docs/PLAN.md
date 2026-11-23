@@ -59,7 +59,12 @@ UI (React) → hooki → use-case (application) → port (interfejs)
    (otwórz, przeciągnij i upuść, przykładowy plik, ostatnie pliki), hasła, ciągłe przewijanie
    z wirtualizacją, zoom, miniatury, przejście do strony, warstwa tekstowa, wyszukiwanie,
    bezpieczne linki, CSP, workflow GitHub Pages.
-2. Warstwa obiektów (Fabric.js), zaznaczanie i przesuwanie, Cofnij/Ponów, zapis i pobieranie.
+2. **Warstwa obiektów** – model obiektów w punktach PDF (`domain/objects`), polecenia i historia
+   Cofnij/Ponów (`application/commands`), warstwa Fabric.js za interfejsem `ObjectLayer`
+   (zaznaczanie, przesuwanie, uchwyty, obrót), prostokąt jako pierwszy obiekt, panel właściwości,
+   kopiuj/wklej/duplikuj/usuń, kolejność warstw, strzałki; zapis: kopia z oryginalnych bajtów +
+   Form XObject (`infrastructure/mupdf/documentExporter.ts`), „Zapisz” przez File System Access API,
+   „Zapisz jako”, pobieranie, gwiazdka i ostrzeżenie przed zamknięciem karty.
 3. Dodawanie tekstu, fonty, whiteout.
 4. Rysowanie i kształty.
 5. Edycja istniejącego tekstu.

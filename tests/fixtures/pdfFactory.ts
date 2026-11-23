@@ -127,3 +127,14 @@ export function corruptedPdf(): Uint8Array {
   broken.fill(0x41, 20);
   return broken;
 }
+
+/** A page with a sticky note made by "another program", to check that saving keeps it. */
+export function annotatedPdf(): Uint8Array {
+  const builder = new PdfBuilder().addPage([{ text: 'Strona z notatką', x: 72, y: 780 }]);
+  const page = builder.doc.loadPage(0);
+  const note = page.createAnnotation('Text');
+  note.setRect([400, 100, 420, 120]);
+  note.setContents('Notatka recenzenta');
+  note.update();
+  return builder.save();
+}

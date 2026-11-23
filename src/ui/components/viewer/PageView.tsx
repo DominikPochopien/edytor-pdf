@@ -1,14 +1,15 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PageSlot } from '../../../application/viewer';
-import type { DocumentId, SearchHit } from '../../../domain/document';
+import type { DocumentId, PageInfo, SearchHit } from '../../../domain/document';
 import { usePageBitmap } from '../../hooks/usePageBitmap';
 import { LinkLayer } from './LinkLayer';
+import { PageObjectLayer } from './PageObjectLayer';
 import { TextLayer } from './TextLayer';
 
 interface PageViewProps {
   readonly documentId: DocumentId;
-  readonly pageIndex: number;
+  readonly page: PageInfo;
   readonly pageCount: number;
   readonly slot: PageSlot;
   readonly left: number;
@@ -21,7 +22,8 @@ interface PageViewProps {
 }
 
 export function PageView(props: PageViewProps) {
-  const { documentId, pageIndex, pageCount, slot, left, zoom, renderScale, priority, hits } = props;
+  const { documentId, page, pageCount, slot, left, zoom, renderScale, priority, hits } = props;
+  const pageIndex = page.index;
   const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const state = usePageBitmap(documentId, pageIndex, renderScale, priority);
@@ -77,6 +79,7 @@ export function PageView(props: PageViewProps) {
         )),
       )}
       <LinkLayer documentId={documentId} pageIndex={pageIndex} zoom={zoom} />
+      <PageObjectLayer page={page} zoom={zoom} />
     </div>
   );
 }

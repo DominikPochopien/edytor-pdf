@@ -11,6 +11,8 @@ export type SidebarTab = 'thumbnails' | 'search';
 export interface OpenedDocument {
   readonly info: DocumentInfo;
   readonly fileName: string;
+  /** Browser handle of the file on disk (Chrome, Edge), used by "Zapisz". */
+  readonly handle?: unknown;
 }
 
 export interface PendingPassword {
@@ -57,6 +59,8 @@ interface ViewerActions {
   setEngineStatus: (status: EngineStatus) => void;
   setOpening: (opening: boolean) => void;
   setDocument: (document: OpenedDocument | null) => void;
+  /** After "Zapisz jako" the document continues under the new name and file. */
+  renameDocument: (fileName: string, handle: unknown) => void;
   setPendingPassword: (pending: PendingPassword | null) => void;
   showError: (code: AppErrorCode | null) => void;
   setZoom: (zoom: number, mode?: ZoomMode) => void;
@@ -109,6 +113,12 @@ export const useViewerStore = create<ViewerState & ViewerActions>()((set, get) =
       zoomMode: 'fit-width',
       pendingPassword: null,
     });
+  },
+  renameDocument: (fileName, handle) => {
+    const { document } = get();
+    if (document !== null) {
+      set({ document: { ...document, fileName, handle } });
+    }
   },
   setPendingPassword: (pendingPassword) => {
     set({ pendingPassword });

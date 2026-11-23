@@ -13,6 +13,8 @@ import type {
 } from '../../domain/document';
 import type { Rect } from '../../domain/geometry';
 import { normalizeRotation } from '../../domain/geometry';
+import type { EditObject } from '../../domain/objects';
+import { DocumentExporter } from './documentExporter';
 import { classifyEngineError, looksLikePdf } from './engineErrors';
 
 export type MupdfModule = typeof Mupdf;
@@ -45,6 +47,9 @@ const REPLACEMENT_CHARACTER = '\uFFFD';
 
 interface OpenDocument {
   readonly doc: Mupdf.PDFDocument;
+  /** The original file; every save starts from a fresh copy of it. */
+  readonly bytes: Uint8Array;
+  readonly password: string | undefined;
   readonly pages: Map<number, Mupdf.PDFPage>;
   readonly info: DocumentInfo;
 }
@@ -149,7 +154,26 @@ export class MupdfEngine {
   private readonly documents = new Map<DocumentId, OpenDocument>();
   private sequence = 0;
 
-  constructor(private readonly mupdf: MupdfModule) {}
+  private readonly exporter: DocumentExporter;
+
+  constructor(private readonly mupdf: MupdfModule) {
+    this.exporter = new DocumentExporter(mupdf);
+  }
+
+  /** Returns the bytes of the file to save: the original with the objects applied. */
+  exportDocument(id: DocumentId, objects: readonly EditObject[]): Result<Uint8Array> {
+    return this.guard(() => {
+      const entry = this.documents.get(id);
+      if (entry === undefined) {
+        return fail('document-closed', id);
+      }
+      const source =
+        entry.password === undefined
+          ? { bytes: entry.bytes }
+          : { bytes: entry.bytes, password: entry.password };
+      return ok(this.exporter.export(source, objects));
+    });
+  }
 
   open(bytes: Uint8Array, password?: string): Result<EngineOpenResult> {
     return this.guard(() => {
@@ -188,7 +212,7 @@ export class MupdfEngine {
         isEncrypted: encrypted,
         wasRepaired: pdf.wasRepaired(),
       };
-      this.documents.set(id, { doc: pdf, pages: new Map(), info });
+      this.documents.set(id, { doc: pdf, pages: new Map(), info, bytes, password });
       return ok({ status: 'opened', document: info });
     });
   }

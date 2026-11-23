@@ -5,7 +5,7 @@ import { useViewerStore } from '../store/viewerStore';
 
 /** Starts downloading the PDF engine as soon as the app shows, in parallel with the welcome screen. */
 export function useEngineLoader(): void {
-  const { engine, session, onEngineReset } = useServices();
+  const { engine, session, editor, onEngineReset } = useServices();
 
   useEffect(() => {
     const store = useViewerStore.getState();
@@ -27,8 +27,9 @@ export function useEngineLoader(): void {
     () =>
       onEngineReset(() => {
         session.forget();
+        editor.reset();
         useViewerStore.getState().setDocument(null);
       }),
-    [onEngineReset, session],
+    [onEngineReset, session, editor],
   );
 }

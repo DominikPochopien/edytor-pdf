@@ -1,7 +1,9 @@
+import { EditorSession } from './application/commands';
 import { DocumentSession } from './application/use-cases';
 import { BYTES_PER_MIB } from './domain/units';
 import { PageImageService } from './application/viewer';
 import { BrowserFileAccess } from './infrastructure/files/BrowserFileAccess';
+import { BrowserFileSaver } from './infrastructure/files/BrowserFileSaver';
 import { WorkerPdfEngine } from './infrastructure/mupdf/WorkerPdfEngine';
 import type { BrowserSupport } from './infrastructure/platform/browserSupport';
 import { IdbRecentFilesStore } from './infrastructure/storage/IdbRecentFilesStore';
@@ -32,10 +34,15 @@ export function createServices(support: BrowserSupport, pickerDescription: strin
     text: engine,
     images,
     session,
+    editor: new EditorSession(),
+    writer: engine,
     files: new BrowserFileAccess(pickerDescription),
+    saver: new BrowserFileSaver(pickerDescription),
+    loadObjectLayers: () =>
+      import('./infrastructure/fabric/FabricObjectLayer').then((m) => m.fabricObjectLayerFactory),
+    newId: () => crypto.randomUUID(),
     recentFiles,
     sampleUrl: `${import.meta.env.BASE_URL}${SAMPLE_FILE}`,
-    canSaveInPlace: support.canSaveInPlace,
     isMobile: support.isMobile,
     onEngineReset: (listener) => engine.onReset(listener),
   };

@@ -4,13 +4,13 @@
 
 Twoje pliki nie są nigdzie wysyłane – wszystko dzieje się w przeglądarce na Twoim komputerze.
 
-> Projekt w budowie – etap 1 z 10 (przeglądanie). Pełna instrukcja pojawi się po ostatnim etapie.
+> Projekt w budowie – etap 2 z 10 (przeglądanie, warstwa obiektów, Cofnij/Ponów, zapis). Pełna instrukcja pojawi się po ostatnim etapie.
 
 ## Jak używać
 
 1. Otwórz link powyżej.
 2. Kliknij „Otwórz PDF” albo przeciągnij plik PDF do okna.
-3. Przeglądaj, powiększaj (Ctrl + kółko myszy) i szukaj (Ctrl+F).
+3. Edytuj i zapisz (Ctrl+S). W Chrome i Edge plik zapisuje się bezpośrednio na dysku, w innych przeglądarkach – jako pobrany plik.
 
 ## Dla programistów
 

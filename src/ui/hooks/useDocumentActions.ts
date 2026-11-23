@@ -3,6 +3,7 @@ import { toAppError } from '../../application/errors';
 import type { PickedFile } from '../../application/ports';
 import { logDev } from '../app/devLog';
 import { useServices } from '../app/services';
+import { useEditorStore } from '../store/editorStore';
 import { useViewerStore } from '../store/viewerStore';
 
 const SAMPLE_FILE_NAME = 'przyklad-arkusz.pdf';
@@ -20,8 +21,19 @@ export interface DocumentActions {
 export function useDocumentActions(): DocumentActions {
   const services = useServices();
 
+  /** True when there is nothing to lose, or the user agreed to throw the changes away. */
+  const confirmDiscard = useCallback(async (): Promise<boolean> => {
+    if (!services.editor.snapshot.dirty) {
+      return true;
+    }
+    return useEditorStore.getState().askDiscard();
+  }, [services]);
+
   const openPicked = useCallback(
     async (file: PickedFile, password?: string): Promise<void> => {
+      if (password === undefined && !(await confirmDiscard())) {
+        return;
+      }
       const store = useViewerStore.getState();
       store.setOpening(true);
       store.showError(null);
@@ -31,7 +43,9 @@ export function useDocumentActions(): DocumentActions {
           store.setPendingPassword({ file, wrongPassword: outcome.wrongPassword });
           return;
         }
-        store.setDocument({ info: outcome.document, fileName: file.name });
+        services.editor.reset();
+        useEditorStore.getState().resetEditor();
+        store.setDocument({ info: outcome.document, fileName: file.name, handle: file.handle });
       } catch (error) {
         logDev('Cannot open document', error);
         store.setPendingPassword(null);
@@ -40,7 +54,7 @@ export function useDocumentActions(): DocumentActions {
         useViewerStore.getState().setOpening(false);
       }
     },
-    [services],
+    [services, confirmDiscard],
   );
 
   const run = useCallback(async (action: () => Promise<void>): Promise<void> => {
@@ -117,10 +131,15 @@ export function useDocumentActions(): DocumentActions {
   const closeDocument = useCallback(
     () =>
       run(async () => {
+        if (!(await confirmDiscard())) {
+          return;
+        }
         await services.session.close();
+        services.editor.reset();
+        useEditorStore.getState().resetEditor();
         useViewerStore.getState().setDocument(null);
       }),
-    [run, services],
+    [run, services, confirmDiscard],
   );
 
   return {

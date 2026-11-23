@@ -179,7 +179,8 @@ export function DocumentView({ document }: DocumentViewProps) {
   if (range !== null) {
     for (let index = range.first; index <= range.last; index++) {
       const slot = layout.slots[index];
-      if (slot === undefined) {
+      const page = info.pages[index];
+      if (slot === undefined || page === undefined) {
         continue;
       }
       const visible =
@@ -188,7 +189,7 @@ export function DocumentView({ document }: DocumentViewProps) {
         <PageView
           key={index}
           documentId={info.id}
-          pageIndex={index}
+          page={page}
           pageCount={info.pages.length}
           slot={slot}
           left={(innerWidth - slot.width) / 2}
